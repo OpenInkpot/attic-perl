@@ -1,0 +1,17 @@
+Source: perl
+Section: perl
+Priority: standard
+Maintainer: Alexander Shishkin <alexander.shishkin@siemens.com>
+Standards-Version: 3.6.1
+Build-Depends: cross-toolchain
+
+Package: miniperl
+Section: perl
+Priority: optional
+Architecture: any
+Provides: perl
+Depends: ${miniperl:Depends}
+Description: The Pathologically Eclectic Rubbish Lister
+ This package contains just a perl binary, it might be required for execution
+ of some system scripts.
+

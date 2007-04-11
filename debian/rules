@@ -1,0 +1,83 @@
+#!/usr/bin/make -f
+
+UPSTREAM_VER := 5.8.7
+TARBALL      := perl_$(UPSTREAM_VER).orig.tar.gz
+BUILD        := $(shell pwd)/build-area
+MAIN         := $(BUILD)/perl-$(UPSTREAM_VER)
+D            := $(shell pwd)/debian/miniperl
+
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+CONFIG_STUFF := ""
+
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+ CC := $(DEB_HOST_GNU_TYPE)-gcc
+ STRIP := $(DEB_HOST_GNU_TYPE)-strip
+else
+ CC := gcc
+ STRIP := strip
+endif
+
+clean:
+	-rm -rf $(BUILD) $(D) patch-stamp unpack-stamp build-stamp debian/{files,substvars}
+
+unpack: unpack-stamp
+unpack-stamp:
+	mkdir -p $(BUILD)
+	tar zxf $(TARBALL) -C $(BUILD)
+	touch $@
+
+patch: unpack patch-stamp
+patch-stamp:
+	for p in `ls --color=never debian/patches/*.patch|sort`; do \
+		cat $$p | ( cd $(MAIN); patch -p1 ); \
+	done
+	touch $@
+
+# XXX: either remove patches from debian/patches or remove patch target
+build: patch build-stamp
+build-stamp:
+	chmod 644 $(MAIN)/uconfig.h
+	sed -i -e "s/\(#define ARCHNAME\).*/\1 \"$(DEB_HOST_GNU_TYPE)\"/" \
+		-e 's,\(#define BIN\) .*,\1 "/usr/bin",' \
+		-e 's,\(#define ARCHLIB\) .*,\1 "/usr/local/lib/perl/5.8",' \
+		-e 's,\(#define ARCHLIB_EXP\) .*,\1 "/usr/lib/perl/5.8",' \
+		-e 's,\(#define PRIVLIB\) .*,\1 "/usr/local/share/perl/5.8",' \
+		-e 's,\(#define PRIVLIB_EXP\) .*,\1 "/usr/share/perl/5.8",' \
+		$(MAIN)/uconfig.h
+	cat debian/config_defines.h >> $(MAIN)/uconfig.h
+	$(MAKE) all -f Makefile.micro CC=$(CC) LD=$(CC) -C $(MAIN)
+	touch $@
+
+install: build
+ifneq ($(shell whoami),root)
+	echo "Current user is not root, exiting"
+	exit 1
+endif
+	mkdir -p $(D)/usr/bin
+	$(STRIP) --remove-section=.comment --remove-section=.note \
+		$(MAIN)/microperl
+	cp -dpf $(MAIN)/microperl $(D)/usr/bin/perl
+	mkdir -p $(D)/usr/share/perl/5.8.7
+	for p in Exporter Text Carp vars warnings strict; do \
+			test -f $(MAIN)/lib/$$p.pm && \
+					cp -x $(MAIN)/lib/$$p.pm $(D)/usr/share/perl/5.8.7/ \
+					|| true; \
+			test -d $(MAIN)/lib/$$p && \
+					( mkdir -p $(D)/usr/share/perl/5.8.7/$$p ; \
+					find $(MAIN)/lib/$$p -maxdepth 1 -name '*.pm' -exec cp -x "{}" \
+							$(D)/usr/share/perl/5.8.7/$$p \; ) \
+					|| true; \
+	done
+	cp -x $(MAIN)/ext/re/re.pm $(D)/usr/share/perl/5.8.7/
+	ln -s 5.8.7 $(D)/usr/share/perl/5.8
+
+binary-arch: build install
+	mkdir $(D)/DEBIAN
+	dpkg-shlibdeps -pminiperl debian/miniperl/usr/bin/perl
+	dpkg-gencontrol -pminiperl -isp -P$(D)
+	dpkg --build $(D) ..
+
+binary: binary-arch
+
+.PHONY: clean configure binary-arch binary

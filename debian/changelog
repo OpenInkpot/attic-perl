@@ -1,0 +1,12 @@
+perl (5.8.7-slind1) testing; urgency=low
+
+  * Testing prerelease.
+
+ -- Alexander Shishkin <alexander.shishkin@siemens.com>  Mon, 30 Jan 2006 13:24:04 +0300
+
+perl (5.8.7-slind0) unstable; urgency=low
+
+  * Mini perl build with some basic modules.
+
+ -- Alexander Shishkin <alexander.shishkin@siemens.com>  Tue, 15 Nov 2005 19:32:20 +0300
+
