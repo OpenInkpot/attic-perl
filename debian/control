@@ -3,7 +3,7 @@ Section: core
 Priority: standard
 Maintainer: Alexander Shishkin <virtuoso@slind.org>
 Standards-Version: 3.6.1
-XCS-Cross-Host-Build-Depends: cross-toolchain
+XCS-Cross-Build-Depends: cross-toolchain
 Build-Depends: cross-toolchain
 
 Package: miniperl
