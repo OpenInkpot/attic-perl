@@ -1,13 +1,13 @@
 Source: perl
-Section: perl
+Section: core
 Priority: standard
-Maintainer: Alexander Shishkin <alexander.shishkin@siemens.com>
+Maintainer: Alexander Shishkin <virtuoso@slind.org>
 Standards-Version: 3.6.1
 XCS-Cross-Host-Build-Depends: cross-toolchain
 Build-Depends: cross-toolchain
 
 Package: miniperl
-Section: perl
+Section: core
 Priority: optional
 Architecture: any
 Provides: perl
