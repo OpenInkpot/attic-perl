@@ -59,7 +59,7 @@ endif
 		$(MAIN)/microperl
 	cp -dpf $(MAIN)/microperl $(D)/usr/bin/perl
 	mkdir -p $(D)/usr/share/perl/5.8.7
-	for p in Exporter Text Carp vars warnings strict; do \
+	for p in Exporter Text Carp vars warnings strict base; do \
 			test -f $(MAIN)/lib/$$p.pm && \
 					cp -x $(MAIN)/lib/$$p.pm $(D)/usr/share/perl/5.8.7/ \
 					|| true; \
