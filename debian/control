@@ -1,18 +1,13 @@
 Source: perl
 Section: core
 Priority: standard
-Maintainer: Alexander Shishkin <virtuoso@slind.org>
-Standards-Version: 3.6.1
-XCS-Cross-Build-Depends: cross-toolchain
-Build-Depends: cross-toolchain
+Maintainer: Mikhail Gusarov <dottedmag@dottedmag.net>
+Standards-Version: 3.8.0
 
 Package: miniperl
-Section: core
-Priority: optional
 Architecture: any
 Provides: perl
 Depends: ${miniperl:Depends}
 Description: The Pathologically Eclectic Rubbish Lister
  This package contains just a perl binary, it might be required for execution
  of some system scripts.
-
