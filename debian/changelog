@@ -1,3 +1,9 @@
+perl (5.8.7-zz.ip2) asimov; urgency=low
+
+  * Rebuild to fix libgcc1 dependency.
+
+ -- Mikhail Gusarov <dottedmag@dottedmag.net>  Tue, 26 May 2009 23:15:05 +0700
+
 perl (5.8.7-zz.ip1) asimov; urgency=low
 
   * First build for IPlinux.
